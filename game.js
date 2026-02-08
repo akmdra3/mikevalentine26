@@ -70,10 +70,19 @@ function startGame() {
 }
 
 function showInstructions() {
-    document.getElementById('instructions-screen').style.display = 'flex';
+    console.log('showInstructions called!');
+    const instructionsScreen = document.getElementById('instructions-screen');
+    console.log('Instructions screen element:', instructionsScreen);
+    if (instructionsScreen) {
+        instructionsScreen.style.display = 'flex';
+        console.log('Display set to flex');
+    } else {
+        console.error('Instructions screen not found!');
+    }
 }
 
 function hideInstructions() {
+    console.log('hideInstructions called!');
     document.getElementById('instructions-screen').style.display = 'none';
 }
 

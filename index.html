@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master World: Valentine Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <audio id="bg-music" loop preload="auto"><source src="music.mp3" type="audio/mpeg"></audio>
+    <audio id="jump-sound" preload="auto"><source src="jump.mp3" type="audio/mpeg"></audio>
+    <audio id="win-sound" preload="auto"><source src="goodboy.mp3" type="audio/mpeg"></audio>
+
+    <div id="title-screen">
+        <h1 class="title-logo">MASTER'S WORLD:<br>VALENTINE'S QUEST</h1>
+        <div id="title-stage">
+            <img id="title-shell" src="shell.png" style="position: absolute; height: 50px; bottom: 12px; z-index: 4001;">
+            <img id="title-player" src="avatar.png" style="position: absolute; height: 130px; bottom: 12px; z-index: 4000;">
+        </div>
+        <button class="btn" style="width: 260px; z-index: 5002; margin: 0 auto;" onclick="startGame()">PRESS START</button>
+    </div>
+
+    <div id="hud">
+        <div>LIVES: <span id="life-count">❤️❤️❤️</span></div>
+        <div style="margin-top: 10px;">💗 <span id="heart-count">0</span>/8</div>
+        <div id="boss-health-container" style="margin-top: 10px; display: none;">
+            <div style="font-size: 12px;">MR. DISTANCE</div>
+            <div id="boss-health">❤️❤️❤️❤️❤️</div>
+        </div>
+    </div>
+
+    <div id="stage">
+        <!-- Parallax Background Layers -->
+        <div id="bg-layer-far" class="parallax-layer"></div>
+        <div id="bg-layer-mid" class="parallax-layer"></div>
+        <div id="bg-layer-near" class="parallax-layer"></div>
+        
+        <div id="world">
+            <!-- Continuous platforms - no gaps! -->
+            <div class="platform" style="left: 0; width: 800px; bottom: 0;"></div>
+            <div class="platform" style="left: 800px; width: 900px; bottom: 0;"></div>
+            <div class="platform" style="left: 1700px; width: 150px; bottom: 50px;"></div>
+            <div class="platform" style="left: 1850px; width: 850px; bottom: 0;"></div>
+            <div class="platform" style="left: 2700px; width: 900px; bottom: 0;"></div>
+            <div class="platform" style="left: 3600px; width: 150px; bottom: 40px;"></div>
+            <div class="platform" style="left: 3750px; width: 900px; bottom: 0;"></div>
+            <div class="platform" style="left: 4650px; width: 700px; bottom: 0;"></div>
+
+            <div id="player-container">
+                <img id="player" src="avatar.png" alt="Master">
+            </div>
+            
+            <!-- Collectible Hearts at varying heights -->
+            <div class="collectible" style="left: 400px; bottom: 150px;">💗</div>    <!-- Requires jump -->
+            <div class="collectible" style="left: 1000px; bottom: 80px;">💗</div>    <!-- Easy -->
+            <div class="collectible" style="left: 1750px; bottom: 170px;">💗</div>   <!-- High - requires jump from elevated platform -->
+            <div class="collectible" style="left: 2100px; bottom: 120px;">💗</div>   <!-- Medium height -->
+            <div class="collectible" style="left: 2900px; bottom: 80px;">💗</div>    <!-- Easy -->
+            <div class="collectible" style="left: 3300px; bottom: 160px;">💗</div>   <!-- Requires jump -->
+            <div class="collectible" style="left: 3650px; bottom: 150px;">💗</div>   <!-- High - jump from elevated platform -->
+            <div class="collectible" style="left: 4400px; bottom: 140px;">💗</div>   <!-- Requires jump -->
+
+            <div class="q-block" style="left: 600px;">?</div>
+            <div class="q-block" style="left: 1600px;">?</div>
+            <div class="q-block" style="left: 2600px;">?</div>
+            <div class="q-block" style="left: 3500px;">?</div>
+            <div class="q-block" style="left: 4200px;">?</div>
+            
+            <!-- Boss -->
+            <div id="boss" style="display: none; position: absolute; left: 4900px; bottom: 0; z-index: 150;">
+                <img src="boss.png" alt="Boss" style="height: 150px; width: auto; display: block;">
+            </div>
+
+            <div id="goal" style="left: 5100px; position: absolute; bottom: 40px; font-size: 60px;">🏰</div>
+        </div>
+    </div>
+    
+    <!-- Particle System Container (fixed positioned, outside stage) -->
+    <div id="particle-container"></div>
+
+    <div id="ui-layer"><div class="retro-box"><p id="q-text"></p><div id="options"></div></div></div>
+    <div id="game-over"><div class="retro-box"><h1>GAME OVER</h1><button class="btn" onclick="location.reload()">RETRY</button></div></div>
+    
+    <!-- Boss Fight Screens -->
+    <div id="boss-intro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; justify-content: center; align-items: center;">
+        <div class="retro-box" style="text-align: center; max-width: 600px;">
+            <h1 style="font-size: 20px; color: #ff0000;">⚠️ BOSS FIGHT ⚠️</h1>
+            <p style="font-size: 16px; margin: 20px 0; color: #ff69b4;">MR. DISTANCE APPEARS!</p>
+            <div style="font-size: 12px; text-align: left; margin: 20px;">
+                <p>💗 Your love makes you stronger!</p>
+                <p style="margin-top: 10px;">• 8 hearts = ONE PUNCH KO! 💥</p>
+                <p>• 6 hearts = Strong attack (3 damage)</p>
+                <p>• 4 hearts = Medium attack (2 damage)</p>
+                <p>• 2 hearts = Weak attack (1 damage)</p>
+                <p style="margin-top: 10px;">Press SPACE to attack!</p>
+                <p>Dodge the broken hearts! 💔</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="boss-victory" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 4000; justify-content: center; align-items: center;">
+        <div class="retro-box" style="text-align: center;">
+            <h1 style="font-size: 24px; color: #ff69b4;">✨ VICTORY! ✨</h1>
+            <p style="font-size: 14px; margin: 20px 0;">You defeated Mr. Distance!</p>
+            <p style="font-size: 12px;">Nothing can keep us apart! 💕</p>
+        </div>
+    </div>
+    
+    <div id="final-screen">
+        <div class="retro-box final-box">
+            <h1>❤️ VICTORY ❤️</h1>
+            <img src="us.jpg" alt="Our Photo" class="final-photo">
+            <div class="scroll-note">
+                <p id="final-msg"></p>
+            </div>
+            <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -11,7 +11,7 @@ const jumpSound = document.getElementById('jump-sound');
 const winSound = document.getElementById('win-sound');
 
 let posX = 150, posY = 0, velY = 0;
-let lives = 3;
+let lives = 5;
 let isJumping = false, isPaused = false, currentGate = 0, gameStarted = false;
 let cameraX = 0; // Track camera position for smooth movement
 

@@ -24,6 +24,7 @@ let bossDirection = 1;
 let bossSpeed = 2;
 let bossAttackTimer = 0;
 let bossProjectiles = [];
+let playerProjectiles = [];
 let bossHitCooldown = 0;
 let canUseSpecialAttack = false;
 let attackCooldown = 0;
@@ -66,6 +67,14 @@ function startGame() {
     }, 100);
 
     loop();
+}
+
+function showInstructions() {
+    document.getElementById('instructions-screen').style.display = 'flex';
+}
+
+function hideInstructions() {
+    document.getElementById('instructions-screen').style.display = 'none';
 }
 
 // 3. SOUND PLAYER HELPER - Ultra robust version
@@ -518,20 +527,21 @@ function updateBoss() {
     // Boss attacks - shoot projectiles
     bossAttackTimer++;
     if (bossAttackTimer > 100 - (5 - bossHealth) * 10) { // Faster attacks as health decreases
-        shootProjectile();
+        shootBossProjectile();
         bossAttackTimer = 0;
     }
     
-    // Update projectiles
-    updateProjectiles();
+    // Update all projectiles
+    updateBossProjectiles();
+    updatePlayerProjectiles();
     
     // Cooldowns
     if (bossHitCooldown > 0) bossHitCooldown--;
     if (attackCooldown > 0) attackCooldown--;
     
-    // Check for special attack key press (SPACE)
-    if ((keys['space'] || keys['x']) && attackCooldown === 0) {
-        trySpecialAttack();
+    // Check for heart shooting (X key)
+    if (keys['x'] && attackCooldown === 0) {
+        shootHeart();
     }
     
     // Check if player touches boss (takes damage)
@@ -542,7 +552,7 @@ function updateBoss() {
     }
 }
 
-function shootProjectile() {
+function shootBossProjectile() {
     bossProjectiles.push({
         x: bossX + 50,
         y: bossY + 50,
@@ -559,7 +569,7 @@ function shootProjectile() {
     document.getElementById('world').appendChild(projectile);
 }
 
-function updateProjectiles() {
+function updateBossProjectiles() {
     bossProjectiles = bossProjectiles.filter((proj, index) => {
         proj.x += proj.vx;
         proj.vy -= 0.5; // Gravity
@@ -588,51 +598,108 @@ function updateProjectiles() {
     });
 }
 
-function trySpecialAttack() {
-    // Check if close enough to boss
-    if (Math.abs(posX - bossX) > 150) {
-        return; // Too far away
-    }
-    
-    attackCooldown = 60; // 1 second cooldown
-    
-    // Calculate damage based on hearts collected
-    let damage = 0;
-    let attackMessage = "";
-    
-    if (collectedHearts >= 8) {
-        // ONE PUNCH! Instant KO
-        damage = 999;
-        attackMessage = "💥 ONE PUNCH! 💥";
-        createHeartBurst(bossX + 50, bossY + 80, 30);
-    } else if (collectedHearts >= 6) {
-        // Strong attack - 3 damage
-        damage = 3;
-        attackMessage = "💪 STRONG ATTACK! 💪";
-        createHeartBurst(bossX + 50, bossY + 80, 15);
-    } else if (collectedHearts >= 4) {
-        // Medium attack - 2 damage
-        damage = 2;
-        attackMessage = "👊 ATTACK! 👊";
-        createHeartBurst(bossX + 50, bossY + 80, 8);
-    } else if (collectedHearts >= 2) {
-        // Weak attack - 1 damage
-        damage = 1;
-        attackMessage = "✊ Weak hit...";
-        createHeartBurst(bossX + 50, bossY + 80, 3);
-    } else {
-        // Not enough hearts!
-        attackMessage = "❌ Not strong enough! Collect hearts! ❌";
-        showTemporaryMessage(attackMessage);
+function shootHeart() {
+    // Check if player has any hearts
+    if (collectedHearts < 2) {
+        showTemporaryMessage("❌ Not enough hearts! Collect more! ❌");
         return;
     }
     
-    // Deal damage to boss
+    attackCooldown = 30; // 0.5 second cooldown
+    
+    // Determine heart size/power based on collected hearts
+    let heartSize = '32px';
+    let heartType = '💗';
+    let damage = 1;
+    
+    if (collectedHearts >= 8) {
+        heartSize = '60px';
+        heartType = '💖';
+        damage = 999; // ONE SHOT
+    } else if (collectedHearts >= 6) {
+        heartSize = '48px';
+        heartType = '💕';
+        damage = 3;
+    } else if (collectedHearts >= 4) {
+        heartSize = '40px';
+        heartType = '💗';
+        damage = 2;
+    }
+    
+    // Create player projectile
+    const playerProj = {
+        x: posX + 60,
+        y: posY + 75,
+        vx: 8,
+        vy: 0,
+        damage: damage,
+        hearts: collectedHearts
+    };
+    
+    playerProjectiles.push(playerProj);
+    
+    // Create visual element
+    const projectile = document.createElement('div');
+    projectile.className = 'player-projectile';
+    projectile.style.left = playerProj.x + 'px';
+    projectile.style.bottom = playerProj.y + 'px';
+    projectile.style.fontSize = heartSize;
+    projectile.textContent = heartType;
+    document.getElementById('world').appendChild(projectile);
+}
+
+function updatePlayerProjectiles() {
+    const projectileElements = document.querySelectorAll('.player-projectile');
+    
+    playerProjectiles = playerProjectiles.filter((proj, index) => {
+        proj.x += proj.vx;
+        
+        // Update visual position
+        if (projectileElements[index]) {
+            projectileElements[index].style.left = proj.x + 'px';
+            projectileElements[index].style.bottom = proj.y + 'px';
+        }
+        
+        // Check collision with boss
+        if (proj.x > bossX && proj.x < bossX + 100 && 
+            proj.y > bossY && proj.y < bossY + 150) {
+            // HIT!
+            hitBoss(proj.damage, proj.hearts);
+            if (projectileElements[index]) projectileElements[index].remove();
+            return false;
+        }
+        
+        // Remove if off screen
+        if (proj.x > 5500) {
+            if (projectileElements[index]) projectileElements[index].remove();
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+function hitBoss(damage, heartsUsed) {
     bossHealth -= damage;
     bossHitCooldown = 30;
     
-    // Show attack message
-    showTemporaryMessage(attackMessage);
+    // Show damage message
+    let message = "";
+    if (heartsUsed >= 8) {
+        message = "💥 ONE SHOT! 💥";
+        createHeartBurst(bossX + 50, bossY + 80, 40);
+    } else if (heartsUsed >= 6) {
+        message = "💪 STRONG HIT! -3 💪";
+        createHeartBurst(bossX + 50, bossY + 80, 20);
+    } else if (heartsUsed >= 4) {
+        message = "💗 GOOD HIT! -2";
+        createHeartBurst(bossX + 50, bossY + 80, 12);
+    } else {
+        message = "✊ Hit! -1";
+        createHeartBurst(bossX + 50, bossY + 80, 5);
+    }
+    
+    showTemporaryMessage(message);
     
     // Update boss health display
     const bossHealthBar = document.getElementById('boss-health');
@@ -648,12 +715,6 @@ function trySpecialAttack() {
             if (bossElement) bossElement.style.opacity = '1';
         }, 300);
     }
-    
-    // Player punch animation
-    playerContainer.style.transform = 'scale(1.2)';
-    setTimeout(() => {
-        playerContainer.style.transform = 'scale(1)';
-    }, 200);
     
     if (bossHealth <= 0) {
         defeatBoss();
@@ -697,6 +758,9 @@ function defeatBoss() {
     
     // Remove all projectiles
     document.querySelectorAll('.boss-projectile').forEach(p => p.remove());
+    document.querySelectorAll('.player-projectile').forEach(p => p.remove());
+    playerProjectiles = [];
+    bossProjectiles = [];
     
     // Victory message - different based on hearts collected
     const bossVictory = document.getElementById('boss-victory');
@@ -704,7 +768,7 @@ function defeatBoss() {
         const victoryText = bossVictory.querySelector('p:nth-child(2)');
         if (victoryText) {
             if (collectedHearts === 8) {
-                victoryText.textContent = 'ONE PUNCH KO! Our love is unstoppable! 💕';
+                victoryText.textContent = 'ONE SHOT! Our love is unstoppable! 💕';
             } else {
                 victoryText.textContent = 'You defeated Mr. Distance!';
             }

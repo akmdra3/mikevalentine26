@@ -18,6 +18,52 @@
             <img id="title-player" src="avatar.png" style="position: absolute; height: 130px; bottom: 12px; z-index: 4000;">
         </div>
         <button class="btn" style="width: 260px; z-index: 5002; margin: 0 auto;" onclick="startGame()">PRESS START</button>
+        <button class="btn" style="width: 260px; z-index: 5002; margin: 10px auto; background: #666;" onclick="showInstructions()">HOW TO PLAY</button>
+    </div>
+    
+    <!-- Instructions Screen -->
+    <div id="instructions-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; justify-content: center; align-items: center; overflow-y: auto;">
+        <div class="retro-box" style="max-width: 600px; margin: 20px; max-height: 90vh; overflow-y: auto;">
+            <h1 style="font-size: 20px; margin-bottom: 20px;">🎮 HOW TO PLAY 🎮</h1>
+            
+            <div style="text-align: left; font-size: 11px; line-height: 1.8;">
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">📖 OBJECTIVE</h2>
+                <p>Answer 5 questions about your relationship, defeat Mr. Distance, and reach the castle!</p>
+                
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">🕹️ CONTROLS</h2>
+                <p><strong>Move:</strong> A/D or Arrow Keys</p>
+                <p><strong>Jump:</strong> SPACE, W, or Arrow Up</p>
+                <p><strong>Shoot Hearts:</strong> X (in boss fight)</p>
+                
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">💗 COLLECT HEARTS</h2>
+                <p>Find 8 floating hearts throughout the level!</p>
+                <p>• Some are easy to grab while walking</p>
+                <p>• Others require jumping to reach</p>
+                <p>• Hearts make you stronger for the boss fight!</p>
+                
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">❓ QUESTIONS</h2>
+                <p>Hit the yellow ? blocks to answer trivia about your relationship.</p>
+                <p>• Get it right to continue</p>
+                <p>• Get it wrong and lose a life ❤️</p>
+                
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">👹 BOSS FIGHT</h2>
+                <p>At the end, face Mr. Distance!</p>
+                <p>• <strong>8 hearts = ONE SHOT KILL!</strong> 💥</p>
+                <p>• 6 hearts = 3 damage per shot 💕</p>
+                <p>• 4 hearts = 2 damage per shot 💗</p>
+                <p>• 2 hearts = 1 damage per shot</p>
+                <p>• Press X to shoot hearts at him!</p>
+                <p>• Dodge his broken heart projectiles! 💔</p>
+                
+                <h2 style="font-size: 14px; color: #ff69b4; margin-top: 15px;">🎯 TIPS</h2>
+                <p>• Collect all 8 hearts for the best ending!</p>
+                <p>• You have 3 lives - use them wisely</p>
+                <p>• Jump to avoid falling or dodge attacks</p>
+                <p>• Take your time - there's no timer!</p>
+            </div>
+            
+            <button class="btn" style="margin-top: 20px; width: 100%;" onclick="hideInstructions()">BACK TO MENU</button>
+        </div>
     </div>
 
     <div id="hud">
@@ -87,12 +133,13 @@
             <h1 style="font-size: 20px; color: #ff0000;">⚠️ BOSS FIGHT ⚠️</h1>
             <p style="font-size: 16px; margin: 20px 0; color: #ff69b4;">MR. DISTANCE APPEARS!</p>
             <div style="font-size: 12px; text-align: left; margin: 20px;">
-                <p>💗 Your love makes you stronger!</p>
-                <p style="margin-top: 10px;">• 8 hearts = ONE PUNCH KO! 💥</p>
-                <p>• 6 hearts = Strong attack (3 damage)</p>
-                <p>• 4 hearts = Medium attack (2 damage)</p>
-                <p>• 2 hearts = Weak attack (1 damage)</p>
-                <p style="margin-top: 10px;">Press SPACE to attack!</p>
+                <p>💗 Shoot your love at him!</p>
+                <p style="margin-top: 10px;">• 8 hearts = ONE SHOT KILL! 💥</p>
+                <p>• 6 hearts = Big heart (3 damage) 💕</p>
+                <p>• 4 hearts = Medium heart (2 damage) 💗</p>
+                <p>• 2 hearts = Small heart (1 damage)</p>
+                <p style="margin-top: 10px;">Press X to shoot hearts!</p>
+                <p>Press SPACE to jump!</p>
                 <p>Dodge the broken hearts! 💔</p>
             </div>
         </div>

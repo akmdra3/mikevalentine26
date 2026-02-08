@@ -302,6 +302,19 @@ html, body {
     to { transform: rotate(360deg); }
 }
 
+.player-projectile {
+    position: absolute;
+    z-index: 140;
+    animation: heart-pulse 0.3s ease-in-out infinite;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.8));
+}
+
+@keyframes heart-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
 #boss-health-container {
     background: rgba(0, 0, 0, 0.7);
     padding: 10px;
@@ -343,6 +356,29 @@ html, body {
 
 .scroll-note::-webkit-scrollbar { width: 8px; }
 .scroll-note::-webkit-scrollbar-thumb { background: #ff69b4; }
+
+/* Instructions Screen */
+#instructions-screen .retro-box {
+    text-align: center;
+}
+
+#instructions-screen .retro-box::-webkit-scrollbar { 
+    width: 10px; 
+}
+
+#instructions-screen .retro-box::-webkit-scrollbar-thumb { 
+    background: #ff69b4; 
+    border-radius: 5px;
+}
+
+#instructions-screen h2 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#instructions-screen p {
+    margin: 5px 0;
+}
 
 .btn { 
     display: block; padding: 15px; background: #444; 
